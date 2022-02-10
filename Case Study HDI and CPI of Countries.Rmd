@@ -1,0 +1,126 @@
+---
+title: "Case Study HDI and CPI of Countries"
+author: "Ahmet Selimhan ŞAHİN"
+date: "21 11 2021"
+output: html_document
+---
+
+## Case Study
+### Installation of required packages
+```{r , warning=FALSE , message=FALSE}
+library(rmarkdown)
+library(knitr)
+library(rworldmap)
+library(ggplot2)
+library(dplyr)
+
+
+```
+
+```{r}
+load("F:/ders/3rd_class/IE421 Data Science for Engineers/week6/countryData.Rdata")
+
+```
+
+
+```{r}
+# col names
+names(countryData)
+# dimensions
+dim(countryData)
+# structure
+str(countryData)
+#summary of data
+summary(countryData)
+```
+
+
+```{r}
+countryData %>%
+  group_by(HDI) %>%
+  arrange(desc(HDI)) %>%
+  top_n(n = 20 , wt = HDI)
+
+
+```
+
+```{r}
+ggplot(countryData , aes(x = CPI , y = HDI)) + geom_point(aes(color = Region) , size = 2) + geom_smooth() + facet_wrap(~ Region , nrow = 3)
+
+
+
+```
+
+
+
+```{r}
+ggplot(countryData) + geom_boxplot(
+  mapping = aes(x = reorder(Region , HDI , FUN = median ) , y = HDI) , fill = "red"
+) + labs(x = "Region" , y = "HDI" , title = "HDI vs Regions") + coord_flip()
+
+
+```
+
+```{r}
+ggplot(countryData) + geom_boxplot(mapping = aes(
+  x = reorder(Region , CPI , FUN = median) , 
+  y = CPI
+) , fill = "blue") + labs(x = "Region" , y = "CPI" , title = "CPI vs Regions") + coord_flip()
+
+
+```
+
+
+
+```{r}
+n <- joinCountryData2Map(countryData , joinCode = "NAME" , nameJoinColumn = "Country")
+
+mapCountryData(n , nameColumnToPlot = "HDI" , mapTitle = "Human Development Index")
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

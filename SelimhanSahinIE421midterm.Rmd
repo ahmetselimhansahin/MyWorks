@@ -1,0 +1,100 @@
+---
+title: "IE421 Midterm"
+author: "Ahmet Selimhan ŞAHİN (118203061)"
+date: "05 12 2021"
+output: html_document
+---
+
+
+Installing Required Packages
+
+```{r , warning=FALSE , message=FALSE}
+library(knitr)
+library(ggplot2)
+library(rmarkdown)
+library(dplyr)
+library(readr)
+```
+
+Note : All messages and warnings are suspended to prevent reader to be disturbed !
+
+
+### Importing Dataset
+
+### Question 1.1
+```{r , warning=FALSE , message=FALSE}
+ load("C:/Users/Selimhan/Desktop/files/IE-421 Data Science/owid_covid_data_4Dec2021.Rdata")
+
+```
+
+## Question 1.2
+
+```{r , warning=FALSE , message=FALSE}
+d2 <- owid_covid_data_4Dec2021 %>%
+  group_by(location) %>%
+  summarize(
+    total_cases = sum(new_cases , na.rm = TRUE) ,
+    total_deaths = sum(new_deaths , na.rm = TRUE) ,
+    total_tests = sum(new_tests , na.rm = TRUE),
+    iso_code = iso_code[1],
+    continent = continent[1],
+  population  = max(population,na.rm = TRUE) ,
+   gdp_per_capita = max(gdp_per_capita,na.rm = TRUE),
+   total_boosters = max(total_boosters , na.rm = TRUE) ,
+    total_vaccinations = max(total_vaccinations , na.rm = TRUE) , 
+   people_vaccinated = max(people_vaccinated , na.rm = TRUE) ,
+   people_fully_vaccinated = max(people_fully_vaccinated , na.rm = TRUE)
+  )
+
+
+```
+
+
+
+### 1.4
+
+```{r , warning=FALSE , message=FALSE}
+str(d2)
+```
+
+
+### Question 2.1
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ top_10 =d2 %>%
+  top_n(n=10 , wt = total_deaths)
+  
+
+```
+
+```{r,,fig.width=8 , warning=FALSE, message=FALSE}
+ggplot(top_10, aes(x = reorder(location ,total_vaccinations   ) , y = total_vaccinations)) + geom_bar(fill = "steelblue" , stat = "identity") + geom_text(aes(label = total_vaccinations))  + coord_flip()
+```
+
+
+### 2.2
+
+```{r , warning=FALSE , message=FALSE }
+top_6 = d2 %>%
+  top_n(n=10 , wt = total_deaths)
+
+
+
+```
+
+
+### Out of time :( 
+
+
+ggplot(top_6) + geom_bar(mapping = aes(x = reorder(location , total_deaths) , y = total_deaths) )
+
+
+
+
+
+
+
+
+

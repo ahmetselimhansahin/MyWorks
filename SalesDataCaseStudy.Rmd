@@ -1,0 +1,305 @@
+---
+title: "Case Study - Online Sales"
+author: "Ahmet Selimhan ŞAHİN"
+date: "20 11 2021"
+output: html_document
+---
+
+## Homework 1
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+
+     
+        
+### Downloading the required packages
+
+```{r , warning=FALSE , message=FALSE}
+## Messages and warnings are suspended to prevent reader to be disturbed
+library(knitr)
+library(ggplot2)
+library(rworldmap)
+library(dplyr)
+
+
+```
+
+   
+    
+    
+    
+```{r , warning=FALSE , message=FALSE}
+load("F:/ders/3rd_class/IE421 Data Science for Engineers/week6/salesData.Rdata")
+```
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+                     
+                     
+                           
+
+## Question 1 Visualizing Number of Invoices
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+                        
+                        
+
+```{r , warning=FALSE , message=FALSE}
+invoiceData = salesData %>%
+  group_by(InvoiceNo , Country) %>%
+  summarize(
+    count = n()
+  )
+
+invoiceData
+```
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+invoiceData %>%
+  filter(Country != "United Kingdom") %>%
+  ggplot() + geom_bar(mapping = aes(reorder(Country , table(Country)[Country])) , fill = "steelblue") + 
+  labs(x = "Country" , y = "Number of Invoices" , title = "Number of Invoices from non-UK Orders") + coord_flip()
+
+
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+
+## Question 2 Total Revenue from Countries
+
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+```{r , warning=FALSE , message=FALSE}
+TotalPrice = mutate(salesData , TotalPrice = 
+                      Quantity * UnitPrice)
+head(TotalPrice , 15)
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+top10_countries = TotalPrice %>%
+  group_by(Country) %>%
+  summarize(
+    countrywise_totalrevenue =         sum(TotalPrice) ) %>%
+  arrange(desc(countrywise_totalrevenue)) %>%
+  top_n(n = 10 , wt = countrywise_totalrevenue)
+   
+top10_countries  
+  
+
+```
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+kable(top10_countries , align = c("c" , "c") , col.names = c("Country" , "Total Revenue") , caption = "Top 10"  )
+
+
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+## Top 10 Countries on the Map
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+```{r , warning=FALSE , message=FALSE}
+n <- joinCountryData2Map(top10_countries , joinCode = "NAME" , nameJoinColumn = "Country")
+```
+
+```{r , warning=FALSE , message=FALSE}
+mapCountryData(n , nameColumnToPlot = "countrywise_totalrevenue" , mapTitle = "Top 10 Countries Based on total revenue")
+
+
+```
+
+
+```{r , warning=FALSE , message=FALSE}
+mapCountryData(n , nameColumnToPlot = "countrywise_totalrevenue" , mapRegion = "Europe" , mapTitle = "top European ")
+
+
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+## Question 3  Most Valued Products and Customers
+
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+```{r , warning=FALSE , message=FALSE}
+TotalPrice %>%
+  group_by(Description) %>%
+  summarize(
+    count = n()
+  )
+
+
+```
+
+
+
+
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+data_named = TotalPrice %>%
+  group_by(Description) %>%
+  summarize(
+    value_product = sum(TotalPrice)) %>%
+  arrange(desc(value_product)) %>%
+  top_n(n = 20, wt = value_product)
+
+kable(data_named , align = c("c" , "c") , col.names = c("Product" , "Value") , caption = "Top 20")
+
+
+```
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+
+## Number of Customers
+
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+```{r , warning=FALSE , message=FALSE}
+TotalPrice %>%
+  group_by(CustomerID) %>%
+  summarize(
+    count = n()
+  )
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+top20_cust = TotalPrice %>%
+  group_by(CustomerID) %>%
+  summarize(customer_amount = sum(TotalPrice)) %>%
+  arrange(desc(customer_amount)) %>%
+  top_n(n = 20 , wt = customer_amount)
+
+
+kable(top20_cust , align = c("c" , "c"))
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

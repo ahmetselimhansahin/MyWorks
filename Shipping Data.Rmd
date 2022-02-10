@@ -1,0 +1,179 @@
+---
+title: "Shipping Data"
+author: "Ahmet Selimhan ŞAHİN"
+date: "04 12 2021"
+output: html_document
+---
+## Installing the packages 
+
+```{r , warning=FALSE , message=FALSE}
+library(ggplot2)
+library(rmarkdown)
+library(knitr)
+library(dplyr)
+
+
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+
+&nbsp;
+
+```{r , warning=FALSE , message=FALSE}
+library(readr)
+shippingData_Kopya <- read_delim("C:/Users/Selimhan/Desktop/shippingData - Kopya.csv", 
+    delim = ";", escape_double = FALSE, locale = locale(decimal_mark = ",", 
+        grouping_mark = "."), trim_ws = TRUE)
+shippingData_Kopya
+
+```
+
+
+### Pie Charts
+
+```{r , warning=FALSE ,message=FALSE}
+ggplot(shippingData_Kopya , aes(x = factor(1) , fill = Status)) + 
+  geom_bar(width = 1)+coord_polar(theta = "y") + 
+  ggtitle("Delivery Status")+
+  facet_grid(facets = . ~ Center)
+
+```
+
+
+### Bar Charts
+
+```{r ,warning=FALSE , message=FALSE}
+ggplot(shippingData_Kopya) + 
+  geom_bar(aes(x = Center , fill = Status))
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+ggplot(shippingData_Kopya) + geom_bar(mapping = aes(x = Center , fill = Status) , position = "fill")+
+  labs(y = "Proportion")
+
+
+```
+
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+ggplot(shippingData_Kopya) + geom_bar(
+  mapping = aes(x = Center , fill = Status ),
+  position = "dodge"
+)
+
+```
+
+
+
+### Scatter Plots
+
+
+
+```{r , warning=FALSE , message=FALSE}
+ggplot(shippingData_Kopya)+
+  geom_point(aes(x = Distance , y = Days))+
+  facet_wrap(~Center , nrow = 1)
+
+
+```
+
+
+```{r , warning=FALSE , message=FALSE}
+ggplot(shippingData_Kopya)+
+  geom_point(aes(x = Distance , y = Days , color = Center))
+
+
+
+```
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(shippingData_Kopya)+
+  geom_smooth(mapping = aes(x = Distance , y = Days , linetype = Center , color = Center))
+
+```
+
+
+### Histograms
+
+
+```{r , message=FALSE , warning=FALSE}
+ggplot(shippingData_Kopya) + geom_histogram(mapping = aes(Days) , binwidth = 0.5)
+
+
+```
+
+Improved version
+
+
+```{r , warning=FALSE , message=FALSE}
+ggplot(shippingData_Kopya) + geom_histogram(mapping = aes(Days) ,       binwidth = 0.5,
+     col = "steelblue",
+     fill = "steelblue" , 
+     alpha = .5
+     ) 
+
+
+
+```
+
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+ggplot(shippingData_Kopya) + geom_histogram(
+      mapping = aes(Days) , 
+      binwidth = 0.5 , 
+      col = "steelblue" , 
+      fill = "steelblue" , 
+      alpha = .5
+) + facet_grid(facets = . ~ Center)
+
+
+
+```
+
+### Boxplots
+
+
+```{r , warning=FALSE , message=FALSE}
+ggplot(shippingData_Kopya) + geom_boxplot(mapping = aes(x = Center , y = Days ) , fill = "orange")
+
+
+
+```
+
+
+

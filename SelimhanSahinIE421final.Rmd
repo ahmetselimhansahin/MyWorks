@@ -1,0 +1,217 @@
+---
+title: "IE421FinalExam"
+author: "Ahmet Selimhan ŞAHİN"
+date: "04/02/2022"
+output: html_document
+---
+
+
+
+
+#### Necessary Packages
+
+
+```{r , warning=FALSE , message=FALSE}
+
+library(dplyr) # For data wrangling
+library(lubridate) # For time series data
+library(ggplot2) # For data visualization
+library(tidyr) # For tidy data
+library(dygraphs) # For visualizing time series
+library(xts) # For creating xts objects
+library(forcats) # For handling categorical variables
+library(knitr) # For R Markdown
+
+
+
+```
+
+## Question 1
+### Loading Datas 
+### Question 1.1
+```{r , warning=FALSE , message=FALSE}
+load("C:/Users/Selimhan/Desktop/BTC.RData")
+load("C:/Users/Selimhan/Desktop/ETH.RData")
+load("C:/Users/Selimhan/Desktop/SP500.RData")
+
+
+
+```
+
+### Question 1.2
+
+```{r , warning=FALSE , message=FALSE}
+str(BTC)
+str(ETH)
+str(SP500)
+
+```
+
+
+```{r , warning=FALSE , message=FALSE}
+
+BTC <- BTC %>%
+  mutate(date = ymd_hms(date))
+
+
+
+ETH <- ETH %>%
+  mutate(date = ymd_hms(date))
+
+
+SP500 <- SP500 %>%
+  mutate(date = dmy(date))
+
+
+
+```
+
+
+```{r , warning=FALSE , message=FALSE}
+
+str(BTC)
+str(ETH)
+str(SP500)
+
+
+```
+
+## Question 2
+
+### Question 2.1 
+
+
+```{r , warning=FALSE , message=FALSE}
+d1 <- SP500 %>%
+    left_join(BTC , by = "date")
+
+
+d2 <- d1 %>%
+    left_join(ETH , by = "date")
+
+kable(head(d2))
+
+
+```
+
+
+### Question 2.2
+
+```{r , warning=FALSE , message=FALSE}
+
+inter = xts(d2[ , -1] , order.by = d2$date)
+
+
+dygraph(inter) %>%
+  dyRangeSelector(height = 20)
+
+
+```
+
+
+## Question 3
+
+### Question 3.1
+
+```{r , warning=FALSE , message=FALSE}
+
+month.cor <- d2 %>%
+  group_by(month = cut(date , "month")) %>%
+  summarize(
+    ETH_vs_BTC = cor(ETH_price , BTC_price)
+  )
+
+
+```
+
+
+```{r , warning=FALSE , message=FALSE}
+
+month.cor = month.cor %>%
+  mutate(month = ymd(month))
+
+str(month.cor)
+
+```
+
+
+```{r , warning=FALSE , message=FALSE}
+
+kable(head(month.cor))
+
+
+```
+
+
+### Question 3.2
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(month.cor , aes(x = month , y = ETH_vs_BTC)) + 
+  geom_line(color = "steelblue" , size = 1) + 
+  labs(x = "Months" , y = "Correlation" , title = "Monthly Correlation Between BTC and ETH")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

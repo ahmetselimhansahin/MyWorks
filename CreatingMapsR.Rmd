@@ -1,0 +1,237 @@
+---
+title: "CreatingMapsR"
+author: "Ahmet Selimhan ŞAHİN"
+date: "04/02/2022"
+output: html_document
+---
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+library(viridis)
+library(ggrepel)
+library(geosphere)
+library(maps)
+library(ggmap)
+library(rworldmap)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(ggplot2)
+library(rmarkdown)
+library(shiny)
+library(lubridate)
+library(dygraphs)
+# setting working directory
+setwd("F:/ders/3rd_class/IE421 Data Science for Engineers/working directory")
+
+
+
+
+```
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+map <- get_stamenmap(bbox = c(left = 22 , bottom = 33 , right = 50 , top = 44) , zoom = 5 , maptype = "watercolor")
+
+
+ggmap(map) + theme_void()
+
+
+```
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+map2 <- get_stamenmap(bbox = c(bottom = 33 , left = 22 , right = 50 , top = 44), zoom = 6  , maptype = "toner-lite")
+
+
+
+ggmap(map2) + theme_void() + theme(
+  panel.border = element_rect(colour = "grey" , fill = NA , size = 2)
+)
+
+```
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+map3 <- get_stamenmap(bbox = c(bottom = 40.8 , left = 28 , right = 30 , top = 41.4) , zoom = 10 , maptype = "terrain")
+
+
+ggmap(map3) + theme_void()
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+World <- map_data("world")
+dim(World)
+
+```
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+kable(head(World))
+
+```
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot() + 
+  geom_polygon(data = World , aes(x = long , y = lat , group = group) , fill = "grey" , alpha = 0.3)  +
+  coord_map()
+
+```
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+Turkey <- map_data("world") %>% filter(region == "Turkey")
+dim(Turkey)
+```
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot() + 
+  geom_polygon(data = Turkey , aes(x = long , y = lat , group = group) , fill = "grey" , alpha = 0.3) + 
+  coord_map()
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+TRcities <- world.cities %>% filter(country.etc == "Turkey")
+
+
+
+```
+
+
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot() + 
+  geom_polygon(data = Turkey , aes(x = long , y = lat , group = group) , 
+               fill = "grey" , alpha = 0.3) +
+  geom_point(data = TRcities , aes(x = long , y = lat)) + 
+  theme_void()
+
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot() + 
+  geom_polygon(data = Turkey , aes(x = long , y = lat , group = group) , 
+               fill = "grey" , alpha = 0.3) +
+  geom_text_repel(data = TRcities %>% arrange(desc(pop)) %>% head(10) , 
+                  aes(x = long , y = lat , label = name) , size = 5)+
+  geom_point(data = TRcities %>% arrange(desc(pop)) %>% head(10) , aes(x = long , y = lat) , color = "red" , size = 3) + 
+  theme_void()
+
+
+
+
+
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

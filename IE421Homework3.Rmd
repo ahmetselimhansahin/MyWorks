@@ -1,0 +1,258 @@
+---
+title: "IE421.01Homework-3"
+author: "Ahmet Selimhan ŞAHİN"
+date: "05/01/2022"
+output: html_document
+---
+### Ahmet Selimhan SAHIN (118203061)
+
+
+## Installing required packages
+
+
+```{r , warning=FALSE , message=FALSE}
+
+library(dplyr)
+library(lubridate)
+library(corrplot)
+library(PerformanceAnalytics)
+library(ggplot2)
+library(tidyr)
+library(dygraphs)
+library(knitr)
+library(forcats)
+library(readr)
+
+```
+
+## Importing Data
+
+```{r , warning=FALSE , message=FALSE}
+dFIR <- read_delim("C:/Users/Selimhan/Desktop/files/dFIR.csv", 
+delim = ";", escape_double = FALSE, col_types = cols(ISE = col_number(), 
+SP = col_number(), DAX = col_number(), FTSE = col_number(), NIKKEI = col_number(),  BOVESPA = col_number()), locale = locale(decimal_mark = ",", grouping_mark = "."), trim_ws = TRUE)
+```
+
+## Converting Dates to Proper Format
+
+```{r , warning=FALSE , message=FALSE}
+
+dFIR = dFIR %>%
+  mutate(date = dmy(date))
+
+str(dFIR)
+
+
+
+```
+
+## 1.3 Correlation Analysis
+
+```{r , warning=FALSE , message=FALSE}
+
+cor(dFIR[,-1])
+
+```
+
+**FTSE** and **DAX** seem to have highest correlation .
+
+### Correlation Plot
+
+```{r , warning=FALSE , message=FALSE}
+
+c = cor(dFIR[,-1])
+corrplot(c , method = "circle" , type = "upper")
+
+
+
+```
+
+The darker the color , the higher the correlation
+
+
+```{r , warning=FALSE  , message=FALSE}
+
+
+chart.Correlation(dFIR[,-1])
+
+
+```
+
+
+
+## 1.4 Time Series Plots
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+ggplot(dFIR , aes(x = date , y = ISE)) + 
+  geom_line(color = "steelblue") + 
+  labs(x = "Date" , y = "Return" , 
+       title = "Istanbul Stock Exchange Daily Returns")
+
+
+
+```
+
+
+### Pipe for gather
+
+
+```{r , warning=FALSE , message=FALSE}
+
+dG <- dFIR %>%
+  select(date , ISE , SP) %>%
+  gather(key = "index" , value = "value" , -date)
+
+
+
+
+```
+
+
+Daily Returns for ISE and S&P 500
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(dG , aes(x = date , y = value)) + 
+  geom_line(aes(color = index) , size = 0.3) + labs(x = "Date" , y = "Return" , title = "Daily Returns for ISE and S&P 500")
+
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+dG2 <- dFIR %>%
+  select(date , ISE , SP , DAX) %>%
+  gather(key = "index" , value = "value" , -date)
+
+
+ggplot(dG2 , aes(x = date , y = value )) + 
+  geom_line(aes(color = index) , size = 0.3) + labs(x = "Date" , y = "Return" , title = "Daily Returns for ISE , S&P 500 , DAX")
+
+
+
+```
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+dG3 <- dFIR %>%
+  gather(key = "index" , value = "value" , -date)
+
+
+ggplot(dG3 , aes(x = date , y = value )) + 
+  geom_line(aes(color = index) , size = 0.3 , alpha = 0.5) + labs(x = "Date" , y = "Return" , title = "Daily Returns for All Six Indexes")
+
+
+
+
+```
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(dG3 , aes(x = date , y = value)) + 
+  geom_line(color = "steelblue" , size = 0.3) + facet_wrap(~index , nrow = 6)
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+d3 = xts(dFIR[,-1] , order.by = dFIR$date)
+
+dygraph(d3) %>%
+  dyRangeSelector(height = 20)
+
+
+
+
+```
+
+## Volatility Analysis
+### 2.1
+> ISE seems to vary more than others
+
+
+### 2.2
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+d.month.volatility <- dFIR %>%
+  group_by(month = cut(date , "month")) %>%
+  summarize(
+    ISE = sd(ISE) , 
+    SP = sd(SP) , 
+    DAX = sd(DAX) , 
+    FTSE = sd(FTSE) , 
+    NIKKEI = sd(NIKKEI) , 
+    BOVESPA = sd(BOVESPA)
+  )
+
+
+
+```
+
+```{r , warning=FALSE , message=FALSE}
+  head(d.month.volatility , n = 10)
+```
+
+```{r ,warning=FALSE , message=FALSE}
+
+d.month.volatility = d.month.volatility %>%
+  mutate(month = ymd(month))
+
+```
+
+### 2.3
+
+
+```{r , warning=FALSE , message=FALSE}
+ggplot(d.month.volatility , aes(x = month , y = ISE)) + geom_line(color = "steelblue" , size = 1) + labs(x = "Months" , y = "Standart Deviation" , title = "Monthly Volatility of Istanbul Stock Exchange Returns")
+
+
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+dm <- d.month.volatility %>%
+  gather(key = "index" , value = "value" , -month)
+
+
+ggplot(dm , aes(x = month , y = value)) + 
+  geom_line(aes(color = index) , size = 0.5) + labs(x = "Months" , y = "Standart Deviation" , title = "Monthly Volatility of All Six Index Returns")
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+

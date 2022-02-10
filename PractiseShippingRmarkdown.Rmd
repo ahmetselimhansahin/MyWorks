@@ -1,0 +1,80 @@
+---
+title: "Practise Shipping"
+author: "Ahmet Selimhan ŞAHİN"
+date: "23/01/2022"
+output: html_document
+---
+
+
+```{r , warning=FALSE , message=FALSE}
+
+load("C:/Users/Selimhan/Desktop/shippingData.RData")
+
+
+
+```
+
+```{r , warning=FALSE , message=FALSE}
+library(ggplot2)
+library(dplyr)
+
+```
+
+
+```{r , warning=FALSE , message=FALSE}
+table(shippingData$Center , shippingData$Status)
+
+
+```
+
+
+```{r , warning=FALSE , message=FALSE}
+shippingData %>%
+  group_by(Center) %>%
+  summarize(
+    count = n() , 
+    mean.Days = mean(Days , na.rm = TRUE) , 
+    sd.Days = sd(Days , na.rm = TRUE) , 
+    mean.Distance = mean(Distance , na.rm = TRUE) , 
+    sd.Distance = sd(Distance , na.rm = TRUE) , 
+    
+  )
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+# Fastest Late Delivery
+min(filter(shippingData , Status == "Late")$Days)
+# Slowest On-time Delivery
+max(filter(shippingData , Status == "On time")$Days)
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+ggplot(shippingData) + geom_bar(aes(x = Center , fill = Status) , position = "dodge")
+
+```
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(shippingData) + geom_histogram(aes(x = Days) , binwidth = 0.5 , color = "blue" , fill = "steelblue" , position = "identity") + facet_wrap(~Center , nrow = 3)
+
+
+
+```
+
+
+
+
+
+
+

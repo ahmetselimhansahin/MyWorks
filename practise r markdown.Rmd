@@ -1,0 +1,116 @@
+---
+title: "practice"
+author: "Ahmet Selimhan ŞAHİN"
+date: "13 11 2021"
+output: html_document
+---
+# IE 421 hw 1
+## Ahmet Selimhan SAHIN 
+
+
+# r markdown practice
+
+
+```{r}
+load("C:/Users/Selimhan/Desktop/shippingData.RData")
+```
+
+```{r , warning=FALSE , results='hide' , echo=TRUE}
+library(knitr)
+library(rmarkdown)
+library(dplyr)
+library(ggplot2)
+
+```
+
+## Question 1
+
+
+```{r warning=FALSE , echo=FALSE}
+table(shippingData$Center , shippingData$Status)
+
+
+```
+
+## a pipe
+
+
+```{r , warning=FALSE , echo=FALSE}
+shipping_center_based = shippingData%>%
+  group_by(shippingData$Center)%>%
+  summarize(
+    count = n() , 
+    mean_days = mean(Days     , na.rm = TRUE) , 
+    std_days = sd(Days ,     na.rm = TRUE) , 
+    mean_distance =    mean(Distance , na.rm =  TRUE) , 
+    std_distance = sd(Distance , na.rm = TRUE)
+    
+    
+  )
+
+
+```
+
+
+```{r , warning=FALSE , echo=FALSE}
+shipping_center_based
+```
+
+## filtering late and on time deliveries
+
+Latest delivery is :
+
+```{r}
+late_deliveries <- filter(shippingData , Status == "Late")
+
+min(late_deliveries$Days)
+
+```
+
+Fastest delivery is :
+
+```{r}
+on_time_deliveries <- filter(shippingData , Status == "On time")
+
+max(on_time_deliveries$Days)
+
+
+```
+
+additional late deliveries if promised time was 5 days
+
+```{r}
+abs(count(filter(shippingData , Status == "Late")) - count(filter(shippingData , Days > 5)))
+
+
+```
+
+graphing delivery status
+
+
+```{r}
+ggplot(shippingData) + geom_bar(mapping = aes(x = Center , fill = Status) , position = "dodge") + ggtitle("Delivery Status by Center")
+
+
+```
+
+
+Histogram graph
+
+```{r , warning=FALSE , echo=FALSE}
+ggplot(shippingData) + geom_histogram(mapping = aes(Days) , binwidth = 0.5 , fill = "darkblue" , alpha = 0.5)+
+  facet_wrap(facets = . ~ Center , nrow = 3 , ncol = 1 )
+
+
+
+
+```
+
+scatter plot
+
+```{r , echo=FALSE}
+ggplot(shippingData ) + geom_point(mapping = aes(x = Distance , y = Days ))+ facet_wrap(~Center , nrow = 3)
+
+```
+
+

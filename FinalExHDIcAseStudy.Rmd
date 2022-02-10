@@ -1,0 +1,90 @@
+---
+title: "CaseStudyHDIcpi"
+author: "Ahmet Selimhan ŞAHİN"
+date: "24/01/2022"
+output: html_document
+---
+
+
+```{r , warning=FALSE , message=FALSE}
+
+library(rmarkdown)
+library(knitr)
+library(ggplot2)
+library(rworldmap)
+library(dplyr)
+
+
+```
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+load("C:/Users/Selimhan/Desktop/files/IE-421 Data Science/countryData.Rdata")
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(countryData , aes(x = CPI , y = HDI)) + geom_point(aes(color = Region) , size = 2) + geom_smooth()
+
+
+
+```
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(countryData , mapping = aes(x = CPI , y = HDI)) + geom_point() + geom_smooth() + facet_wrap(~Region , nrow = 2 )
+
+
+
+```
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(data = countryData) + geom_boxplot(aes(x = reorder(x = Region , HDI , FUN = median ) , y = HDI ) , fill = "pink") + coord_flip()
+
+
+
+
+
+```
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(data = countryData) + geom_boxplot(aes(x = reorder(x = Region , CPI , FUN = median ) , y = CPI ) , fill = "pink") + coord_flip()
+
+
+
+
+
+```
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+
+joinCountryData2Map(countryData , joinCode = "NAME" , nameJoinColumn = "Country") %>%
+  mapCountryData(nameColumnToPlot = "HDI" , mapTitle = "Human Development Index")
+
+
+```
