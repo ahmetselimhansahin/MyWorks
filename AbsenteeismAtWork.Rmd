@@ -1,0 +1,157 @@
+---
+title: "AbsenteeismAtWork"
+author: "Ahmet Selimhan ŞAHİN"
+date: "04/02/2022"
+output: html_document
+---
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+library(lubridate)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(ggplot2)
+library(rmarkdown)
+library(dygraphs)
+library(forcats)
+library(readr)
+
+
+```
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+Absenteeism_at_work <- read_delim("C:/Users/Selimhan/Desktop/files/IE-421 Data Science/Absenteeism_at_work.csv" , delim = ";", escape_double = FALSE, locale = locale(decimal_mark = ",",  grouping_mark = "."), trim_ws = TRUE)
+
+
+
+
+employeeNames <- read_delim("C:/Users/Selimhan/Desktop/files/IE-421 Data Science/employeeNames.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+
+
+
+
+
+d <- Absenteeism_at_work
+
+
+
+```
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+d <- d %>%
+  left_join(employeeNames , by = "ID")
+
+
+
+
+
+```
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+d2 <- d %>%
+  group_by(name) %>%
+  summarize( 
+    count = n() , 
+    hours = sum(`Absenteeism time in hours` , na.rm = TRUE) , 
+    av.hours = round(hours/count , 1) , 
+    distance = mean(`Distance from Residence to Work` , na.rm = TRUE) , 
+    age = max(Age , na.rm = TRUE) , 
+    dfailure = max(`Disciplinary failure` , na.rm = TRUE)
+    
+    
+    
+    )
+
+
+kable(d2)
+
+
+
+
+```
+
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+
+d2$dfailure <- factor(d2$dfailure , labels = c("No","Yes"))
+
+
+```
+
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(d2) + geom_boxplot(aes(x = dfailure , y = count ) , fill = "pink" )
+
+
+
+
+
+```
+
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+
+ggplot(d2) + geom_boxplot(aes(x = dfailure , y = hours ) , fill = "pink" )
+
+
+
+
+```
+
+
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(d2) + geom_point(aes(x = distance , y = count) , size = 10 , color = "steelblue" , alpha = 0.5)
+
+
+
+```
+
+
+
+
+
+```{r , warning=FALSE , message=FALSE}
+
+ggplot(d2 , aes(x = distance , y = count , label = name , size = av.hours , color = dfailure)) + geom_point(alpha = 0.3) + geom_text(aes(label = name) , size = 3) +  scale_size_continuous(name = "Average Hours" , range = c(0,20)) + scale_colour_discrete(name = "Disciplinary Failure")
+
+
+
+```
+
