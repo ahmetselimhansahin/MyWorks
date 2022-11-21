@@ -1,0 +1,179 @@
+---
+title: "denemeee"
+author: "Ahmet Selimhan SAHIN 118203061"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+Required Packages
+
+```{r , warning=FALSE , message=FALSE}
+library(knitr)
+library(rmarkdown)
+library(dplyr)
+library(ggplot2)
+library(readr)
+
+```
+
+
+
+### Importing Data
+
+```{r , warning=FALSE , message=FALSE}
+load("D:/ders/3rd class/First Term/IE421 Data Science for Engineers/midterm exam/owid_covid_data_4Dec2021.Rdata")
+```
+
+### 1.2
+
+```{r , warning=FALSE , message=FALSE}
+d2 = owid_covid_data_4Dec2021 %>%
+  group_by(location)%>%
+  summarize(
+    total_cases = sum(new_cases , na.rm = TRUE) , 
+    total_deaths = sum(new_deaths , na.rm = TRUE) , 
+    total_tests = sum(new_tests , na.rm = TRUE) , 
+    iso_code = iso_code[1] , 
+    continent = continent[1] ,
+    population = max(population , na.rm = TRUE) , 
+    gdp_per_capita = max(gdp_per_capita , na.rm = TRUE) , 
+    total_vaccinations = max(total_vaccinations , na.rm = TRUE) , 
+    people_vaccinated = max(people_vaccinated , na.rm = TRUE) , 
+    people_fully_vaccinated = max(people_fully_vaccinated , na.rm = TRUE) , 
+    total_boosters = max(total_boosters , na.rm = TRUE)
+  )
+  
+
+
+```
+
+
+### 1.3
+```{r , warning=FALSE , message=FALSE}
+
+d2 = d2 %>%
+  mutate(percentage_fully_vaccinated = people_fully_vaccinated/population*100 , percentage_vaccinated = people_vaccinated/population*100)
+
+
+```
+
+### 1.4
+```{r , warning=FALSE , message=FALSE}
+
+str(d2)
+
+
+```
+
+### 2.1
+```{r, warning=FALSE , message=FALSE , fig.width= 8 }
+
+d2 %>%
+  top_n(n = 10 , wt = total_vaccinations) %>% 
+  ggplot(aes(x =reorder(location , total_vaccinations ) , y = total_vaccinations)) + geom_bar(fill = "steelblue" , stat = "identity")+  coord_flip() + ylab("Total Vaccinations") + xlab("Countries") + geom_text(aes(label = total_vaccinations , hjust = .7 ))
+  
+
+
+
+```
+
+### 2.2
+
+
+
+```{r , warning=FALSE , message=FALSE, fig.width=8}
+d2 %>%
+  group_by(continent) %>% 
+  top_n(6,wt=total_vaccinations) %>% 
+  ggplot(aes(x = reorder(location , total_vaccinations) , y = total_vaccinations)) + geom_bar(fill = "steelblue" , stat = "identity")+
+  coord_flip() + facet_wrap(~continent, scales="free")
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+### 3
+
+
+```{r , warning=FALSE , message=FALSE}
+
+d2 %>%
+  ggplot(mapping = aes(x = gdp_per_capita , y = percentage_vaccinated , show.legend = TRUE , colour = continent , size = population)) + geom_point(alpha = 0) + geom_text(aes(label = iso_code))
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r, warning=FALSE, message=FALSE}
+
+
+
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+
+
+
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+
+
+
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+
+
+
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+
+
+
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+
+
+
+```
+
